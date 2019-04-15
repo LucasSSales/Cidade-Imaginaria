@@ -7,10 +7,10 @@ public class TrafficLight {
     private boolean red;
     private int time;
     private int currentTime;
-    private String dir01;
-    private String dir02;
+    private char dir01;
+    private char dir02;
 
-    public TrafficLight(int time, String dir01, String dir02){
+    public TrafficLight(int time, int x, int y, char dir01, char dir02){
         Random r = new Random();
         this.red = r.nextBoolean();
         this.time = time;
@@ -32,11 +32,15 @@ public class TrafficLight {
         return red;
     }
 
-    public String getDir01() {
+    public char getDir01() {
         return dir01;
     }
 
-    public String getDir02() {
+    public char getDir02() {
         return dir02;
+    }
+
+    public int getCurrentTime() {
+        return currentTime;
     }
 }
