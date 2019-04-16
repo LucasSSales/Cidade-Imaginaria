@@ -1,17 +1,28 @@
 package Default;
 
+import GA.Chromossome;
+import GA.GeneticAlgorithm;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 public class Main {
 
 
     public static void main(String args[]){
-        City c = new City();
-        char[][] city;
+        //City c = new City();
+        GeneticAlgorithm ga = new GeneticAlgorithm();
+        Chromossome best;
 
-        for (int i =0; i < 20; i++){
-            System.out.println("\n\n");
-            //c.buildCity();
-            c.moving();
-            c.printCity();
+        ga.roulette();
+
+
+        for (int i =0; i < 100; i++){
+            //System.out.println("\n\n");
+            //c.moving();
+            //c.printCity();
         }
     }
 }

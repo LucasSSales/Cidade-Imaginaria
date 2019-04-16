@@ -28,8 +28,11 @@ public class TrafficLight {
         }
     }
 
-    public boolean isRed() {
-        return red;
+    public boolean isRed(char dir) {
+        if(dir == dir01)
+            return red;
+        else
+            return !red;
     }
 
     public char getDir01() {

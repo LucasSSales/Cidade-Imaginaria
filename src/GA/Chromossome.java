@@ -2,7 +2,10 @@ package GA;
 
 public class Chromossome {
 
-    private double time;
-    private double[] vector;
+    public int congsNum;
+    public int[] lightTimes = new int[12];
+
+
+    public Chromossome(){}
 
 }

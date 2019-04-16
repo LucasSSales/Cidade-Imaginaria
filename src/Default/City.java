@@ -9,7 +9,7 @@ public class City {
     private char[][] moviment = new char[19][19];
     private ArrayList<Car> cars = new ArrayList<>();
     private ArrayList<TrafficLight> lights = new ArrayList<>();
-    Random r = new Random();
+    private Random r = new Random();
 
     //LEGENDA DA MATRIZ
     //^ - sul-norte
@@ -26,16 +26,7 @@ public class City {
         putTrafficLights();
         //carros
         putCars();
-
         printCity();
-    }
-
-    //RECEBE O X E O Y DA POSIÇÃO PARA ONDE O CARRO IRÁ
-    public boolean canMove(int[] coords){
-        if(this.moviment[coords[0]][coords[1]]=='C'){
-            return false;
-        }
-        return true;
     }
 
 
@@ -57,14 +48,11 @@ public class City {
                 System.out.println("vai toma no meio do olho do seu cu fdp arrombado desgraçado!");
 
 
-
             //VENDO PROXIMO CHAR
             char c = this.city[next[0]][next[1]];
 
-           // System.out.println("Aonde pretende ir: "+c+ "  em: "+next[0]+ "  "+next[1]);
-
             //DE CARA COM UM SEMAFORO VERMELHO
-            if(c <= 11 && lights.get(c).isRed()){
+            if(c <= 11 && lights.get(c).isRed(car.direction)){
                 System.out.println("O SINAL ESTA VERMELHO\n");
                 continue;
             }
@@ -75,17 +63,9 @@ public class City {
                 continue;
             }
 
-
-
-//            System.out.println("Antes");
-//            System.out.println(car);
-
             this.moviment[car.current[0]][car.current[1]] = ' ';
             car.updateLocation(next);
             this.moviment[car.current[0]][car.current[1]] = 'C';
-
-            //System.out.println(next[0] + "  " + next[1]);
-
 
             //ATUALIZANDO A DIREÇÃO
             if(c > 11){
@@ -93,10 +73,6 @@ public class City {
             }else{
                 car.direction = car.changeDirection(lights.get(c));
             }
-
-//            System.out.println("Depois");
-//            System.out.println(car);
-//            System.out.println("\n\n\n\n");
         }
     }
 
@@ -142,21 +118,6 @@ public class City {
             System.out.println("");
         }
     }
-
-//    public void printMovs(){
-//        for (int i =0; i < 19; i++){
-//            for(int j=0; j<19; j++){
-//                if(this.moviment[i][j] == 'C'){
-//                    System.out.print(this.moviment[i][j] + " ");
-//                }else if(this.moviment[i][j]>=0 && this.moviment[i][j]<=11){
-//                    System.out.print("# ");
-//                }else{
-//                    System.out.println("* ");
-//                }
-//            }
-//            System.out.println("");
-//        }
-//    }
 
     public void putCars(){
         Random r = new Random();
