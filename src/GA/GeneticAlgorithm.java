@@ -1,30 +1,23 @@
 package GA;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class GeneticAlgorithm {
 
-    private Chromossome[] population = new Chromossome[10];
+    public Chromossome[] population = new Chromossome[30];
     Random r = new Random();
     private int fitness;
 
     public GeneticAlgorithm(){
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < population.length; i++) {
             population[i] = new Chromossome();
             for(int j=0; j<12; j++){
-                population[i].lightTimes[j] = r.nextInt(1000);
+                population[i].lightTimes[j] = r.nextInt(300);
             }
-        }
-
-        for (Chromossome c: population) {
-            c.congsNum = r.nextInt(100);
-            System.out.println(c.congsNum);
         }
     }
 
-
-    public void run(){
+    public void sort(){
         //ORDENAÇÃO
         for (int i = 0; i < population.length; i++) {
             for(int j = 0; j < population.length; j++){
@@ -35,16 +28,30 @@ public class GeneticAlgorithm {
                 }
             }
         }
+    }
 
+    public void run(){
+
+
+        //System.out.println(population[0].congsNum);
+
+        int len = this.population.length/2;
+
+        Chromossome[] newPop = new Chromossome[population.length];
         for(int i =0; i < population.length; i++){
-            crossover(population[r.nextInt(5)], population[r.nextInt(5)+5]);
+            newPop[i] = crossover(population[r.nextInt(len)], population[r.nextInt(len)+len]);
         }
 
-//        int roulette = r.nextInt(population.length/2);
-//
-//        for(int i = 0; i < elite; i++){
-//
-//        }
+        population = newPop;
+
+
+        for (Chromossome c: population) {
+            c.congsNum = 0;
+            if(r.nextBoolean()){
+                mutation(c);
+            }
+        }
+
     }
 
     public Chromossome roulette(){
@@ -66,21 +73,21 @@ public class GeneticAlgorithm {
             System.out.println("");
         }
 
-//        for (int i: roulette) {
-//            System.out.println(i);
-//        }
-
 
         return population[roulette[r.nextInt(100)]];
     }
 
-    public void crossover(Chromossome c1, Chromossome c2){
-        int point = r.nextInt(12);
-        for(int i = point; i < 12; i++){
-            int aux = c1.lightTimes[i];
-            c1.lightTimes[i] = c2.lightTimes[i];
-            c2.lightTimes[i] = aux;
+    public Chromossome crossover(Chromossome c1, Chromossome c2){
+        Chromossome newChr = new Chromossome();
+        newChr.congsNum = 0;
+        for(int i = 0; i < 12; i++){
+            if(r.nextInt(100)<70){
+                newChr.lightTimes[i] = c1.lightTimes[i];
+            }else{
+                newChr.lightTimes[i] = c2.lightTimes[i];
+            }
         }
+        return newChr;
     }
 
     public void mutation(Chromossome c){

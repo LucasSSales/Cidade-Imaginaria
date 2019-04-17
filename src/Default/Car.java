@@ -54,16 +54,20 @@ public class Car {
     public char changeDirection(TrafficLight tl){
         Random coin = new Random();
         if(coin.nextInt(2) == 0){
-            System.out.println("coin 0");
+           // System.out.println("coin 0");
             return direction;
         }else{
-            System.out.println("coin 1");
+           // System.out.println("coin 1");
             if(tl.getDir01() == direction){
                 return tl.getDir02();
             }else{
                 return tl.getDir01();
             }
         }
+    }
+
+    public int[] getSource(){
+        return source;
     }
 
     public boolean isWaiting() {

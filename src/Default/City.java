@@ -20,46 +20,35 @@ public class City {
     //0 a 11 - semaforos
 
     public City(){
-        //cidade
-        buildCity();
-        //semaforos
-        putTrafficLights();
-        //carros
-        putCars();
-        printCity();
     }
 
 
-    public void moving(){
+    public int moving(){
         //DECREMENTANDO TEMPO DOS SEMAFOROS
         for (TrafficLight tl :lights) {
             tl.decreaseTime();
         }
 
+        int congs = 0;
+
         int carro = 0;
         //DECIDINDO O Q CADA CARRO FARÁ
         for(Car car : cars){
-            //PEGANDO A PROXIMA LOCALIZAÇÃO
-            System.out.println("INFOS SOBRE O CARRO: "+ (carro++));
-          //  System.out.println("Sua direção: "+car.direction);
+            //PEGANDO A PROXIMA LOCALIZAÇÃO;
             int[] next = car.go();
-            //TORNANDO A MATRIZ CIRCULAR
-            if(next[0] < 0 || next[1] < 0)
-                System.out.println("vai toma no meio do olho do seu cu fdp arrombado desgraçado!");
-
 
             //VENDO PROXIMO CHAR
             char c = this.city[next[0]][next[1]];
 
             //DE CARA COM UM SEMAFORO VERMELHO
             if(c <= 11 && lights.get(c).isRed(car.direction)){
-                System.out.println("O SINAL ESTA VERMELHO\n");
                 continue;
             }
 
             //SE TIVER UM CARRO ALI
             if(this.moviment[next[0]][next[1]] == 'C'){
-                System.out.println("CONGESTIONAMENTO\n");
+                if(isCongs(next, car.direction))
+                    congs++;
                 continue;
             }
 
@@ -74,6 +63,7 @@ public class City {
                 car.direction = car.changeDirection(lights.get(c));
             }
         }
+        return congs;
     }
 
     public void buildCity(){
@@ -100,6 +90,20 @@ public class City {
         this.city[0][18] = '<';
         this.city[18][0] = '>';
         this.city[18][18] = '^';
+
+        //inidcadores de semaforo
+        this.city[0][6] = 0;
+        this.city[0][12] = 1;
+        this.city[6][0] = 2;
+        this.city[6][6] = 3;
+        this.city[6][12] = 4;
+        this.city[6][18] = 5;
+        this.city[12][0] = 6;
+        this.city[12][6] = 7;
+        this.city[12][12] = 8;
+        this.city[12][18] = 9;
+        this.city[18][6] = 10;
+        this.city[18][12] = 11;
     }
 
     public void printCity(){
@@ -133,41 +137,68 @@ public class City {
                     newCar.direction = this.city[x][y];
                     cars.add(newCar);
                     //
-                    System.out.println("Carro " + i + " em: "+ x +" "+ y);
-                    System.out.println("Carro " + i + " vai para: "+ newCar.direction);
+//                    System.out.println("Carro " + i + " em: "+ x +" "+ y);
+//                    System.out.println("Carro " + i + " vai para: "+ newCar.direction);
                     break;
                 }
             }
         }
     }
 
-    public void putTrafficLights(){
+    public void resetMoviment(){
+        for (Car c: cars) {
+            this.moviment[c.current[0]][c.current[1]] =' ';
+            this.moviment[c.getSource()[0]][c.getSource()[1]] ='C';
+        }
+        //printCity();
+    }
+
+    public boolean isCongs(int[] coords, char dir){
+//        System.out.println(coords[0] + " " + coords[1]);
+////        System.out.println(dir + "");
+        char c = this.city[coords[0]][coords[1]];
+        if(c<=11 && lights.get(c).isRed(dir)){
+            return true;
+        }else if(c<=11 && !lights.get(c).isRed(dir)){
+            return false;
+        }else if(this.moviment[coords[0]][coords[1]]=='C'){
+            if(dir=='>'){
+                coords[0] = coords[0];
+                coords[1] = (coords[1]+1)%19;
+            }else if(dir=='<'){
+                coords[0] = coords[0];
+                coords[1] = coords[1]-1;
+                if(coords[1]<0)
+                    coords[1] += 19;
+            }else if(dir=='^'){
+                coords[0] = coords[0]-1;
+                coords[1] = coords[1];
+                if(coords[0]<0)
+                    coords[0] += 19;
+            }else if(dir=='v'){
+                coords[0] = (coords[0]+1)%19;
+                coords[1] = coords[1];
+            }
+            return isCongs(coords, this.city[coords[0]][coords[1]]);
+        }else{
+            return false;
+        }
+    }
+
+    public void putTrafficLights(int[] lightTimes){
         //criando semaforos
-        lights.add(new TrafficLight(r.nextInt(15), 0, 6, '<', 'v'));
-        lights.add(new TrafficLight(r.nextInt(15), 0, 12, '<', '<')); //rever
-        lights.add(new TrafficLight(r.nextInt(15), 6, 0, 'v', '>'));
-        lights.add(new TrafficLight(r.nextInt(15), 6, 6, 'v', '>'));
-        lights.add(new TrafficLight(r.nextInt(15), 6, 12, '^', '>'));
-        lights.add(new TrafficLight(r.nextInt(15), 6, 18, '^', '^'));//rever
-        lights.add(new TrafficLight(r.nextInt(15), 12, 0, 'v', 'v'));//rever
-        lights.add(new TrafficLight(r.nextInt(15), 12, 6, 'v', '<'));
-        lights.add(new TrafficLight(r.nextInt(15), 12, 12, '^', '<'));
-        lights.add(new TrafficLight(r.nextInt(15), 12, 18, '^', '<'));
-        lights.add(new TrafficLight(r.nextInt(15), 18, 6, '>', '>'));//rever
-        lights.add(new TrafficLight(r.nextInt(15), 18, 12, '>', '^'));
-        //adicionando na matriz
-        this.city[0][6] = 0;
-        this.city[0][12] = 1;
-        this.city[6][0] = 2;
-        this.city[6][6] = 3;
-        this.city[6][12] = 4;
-        this.city[6][18] = 5;
-        this.city[12][0] = 6;
-        this.city[12][6] = 7;
-        this.city[12][12] = 8;
-        this.city[12][18] = 9;
-        this.city[18][6] = 10;
-        this.city[18][12] = 11;
+        lights.add(new TrafficLight(lightTimes[0], 0, 6, '<', 'v'));
+        lights.add(new TrafficLight(lightTimes[1], 0, 12, '<', '<')); //rever
+        lights.add(new TrafficLight(lightTimes[2], 6, 0, 'v', '>'));
+        lights.add(new TrafficLight(lightTimes[3], 6, 6, 'v', '>'));
+        lights.add(new TrafficLight(lightTimes[4], 6, 12, '^', '>'));
+        lights.add(new TrafficLight(lightTimes[5], 6, 18, '^', '^'));//rever
+        lights.add(new TrafficLight(lightTimes[6], 12, 0, 'v', 'v'));//rever
+        lights.add(new TrafficLight(lightTimes[7], 12, 6, 'v', '<'));
+        lights.add(new TrafficLight(lightTimes[8], 12, 12, '^', '<'));
+        lights.add(new TrafficLight(lightTimes[9], 12, 18, '^', '<'));
+        lights.add(new TrafficLight(lightTimes[10], 18, 6, '>', '>'));//rever
+        lights.add(new TrafficLight(lightTimes[11], 18, 12, '>', '^'));
     }
 
 }

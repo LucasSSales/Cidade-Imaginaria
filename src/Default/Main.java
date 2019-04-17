@@ -3,26 +3,41 @@ package Default;
 import GA.Chromossome;
 import GA.GeneticAlgorithm;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class Main {
 
-
     public static void main(String args[]){
-        //City c = new City();
         GeneticAlgorithm ga = new GeneticAlgorithm();
-        Chromossome best;
+        City c = new City();
+        c.buildCity();
+        c.putCars();
+        Chromossome best = new Chromossome();
+        best.congsNum = Integer.MAX_VALUE;
+        int var = Integer.MAX_VALUE;
+        int cont = 0;
 
-        ga.roulette();
-
-
-        for (int i =0; i < 100; i++){
-            //System.out.println("\n\n");
-            //c.moving();
-            //c.printCity();
+        for(int gen=0; gen<150; gen++){
+            for (Chromossome chromossome: ga.population) {
+                c.putTrafficLights(chromossome.lightTimes);
+                int congs = 0;
+                for (int i =0; i < 1000; i++){
+                    congs += c.moving();
+                }
+                chromossome.congsNum = congs;
+                c.resetMoviment();
+            }
+            ga.sort();
+            if(best.congsNum > ga.population[0].congsNum){
+                best = ga.population[0];
+            }else{
+                cont++;
+            }
+            ga.run();
+            if(cont == 50)
+                break;
         }
+
+        System.out.println("BEST");
+        System.out.println(best.congsNum);
     }
 }
