@@ -21,9 +21,37 @@ public class City {
 
     public City(){
     }
+    
+    
+    public String getCity(){
+        String exit = "<html><p>";
+        for(int i = 0; i < 19; i++){
+            for(int j=0; j<19; j++){
+                if(this.moviment[i][j] == 'C'){
+                    exit+="C";
+               }else if(this.city[i][j]<=11){
+                    exit += "#";
+                }else if(this.city[i][j]=='<'){
+                    exit += "&lt";
+                }else if(this.city[i][j]=='>'){
+                    exit += "&gt";
+                }else if(this.city[i][j]=='*'){
+                    exit += "--";
+                }
+                else{
+                    exit += ""+this.city[i][j];
+                }
+                exit+="  ";
+            }
+            exit += "<br/>";
+        }
+        exit += "</p></html>";
+       // System.out.println(exit);
+        return exit;
+    }
 
 
-    public int moving(){
+    public int moving(int currentTime){
         //DECREMENTANDO TEMPO DOS SEMAFOROS
         for (TrafficLight tl :lights) {
             tl.decreaseTime();
@@ -34,6 +62,26 @@ public class City {
         int carro = 0;
         //DECIDINDO O Q CADA CARRO FARÁ
         for(Car car : cars){
+            
+            if(car.finished)
+                continue;
+            
+            //System.out.println("NAO FINISHOU");
+            
+            if(!car.canLeave(currentTime))
+                continue;
+            
+            ///System.out.println("NAO PODE LEAVAR");
+            
+            if(!car.started && this.moviment[car.getSource()[0]][car.getSource()[1]]!= 'C'){
+                this.moviment[car.current[0]][car.current[1]] = 'C';
+                car.started = true;
+                //System.out.println("e... começou!");
+                //printCity();
+            }
+            
+            //System.out.println("JA DEVIA ESTAR NA MATRIZ");
+            
             //PEGANDO A PROXIMA LOCALIZAÇÃO;
             int[] next = car.go();
 
@@ -62,6 +110,14 @@ public class City {
             }else{
                 car.direction = car.changeDirection(lights.get(c));
             }
+            
+            //vendo se chegou ao destino/esta proximo ao quarteirao
+            int x = car.current[0], y = car.current[1];
+            car.arrived(x-1<0?this.city[19+(x-1)][y]:this.city[x-1][y], this.city[(x+1)%19][y], 
+                    this.city[x][(y+1)%19], y-1<0?this.city[x][19+(y-1)]:this.city[x][y-1]);
+            if(car.finished)
+                this.moviment[x][y] = ' ';
+            
         }
         return congs;
     }
@@ -104,6 +160,64 @@ public class City {
         this.city[12][18] = 9;
         this.city[18][6] = 10;
         this.city[18][12] = 11;
+        
+        //identificando o quarteirao
+        for(int i =1; i<6; i++){
+            for(int j =1; j<6; j++){
+                this.city[i][j] = '1';
+            }
+        }
+        
+        for(int i =1; i<6; i++){
+            for(int j =7; j<12; j++){
+                this.city[i][j] = '2';
+            }
+        }
+        
+        for(int i =1; i<6; i++){
+            for(int j =13; j<18; j++){
+                this.city[i][j] = '3';
+            }
+        }
+        
+        for(int i =7; i<12; i++){
+            for(int j =1; j<6; j++){
+                this.city[i][j] = '4';
+            }
+        }
+        
+        for(int i =7; i<12; i++){
+            for(int j =7; j<12; j++){
+                this.city[i][j] = '5';
+            }
+        }
+        
+        for(int i =7; i<12; i++){
+            for(int j =13; j<18; j++){
+                this.city[i][j] = '6';
+            }
+        }
+        
+        for(int i =13; i<18; i++){
+            for(int j =1; j<6; j++){
+                this.city[i][j] = '7';
+            }
+        }
+        
+        for(int i =13; i<18; i++){
+            for(int j =7; j<12; j++){
+                this.city[i][j] = '8';
+            }
+        }
+        
+        for(int i =13; i<18; i++){
+            for(int j =13; j<18; j++){
+                this.city[i][j] = '9';
+            }
+        }
+        
+        printCity();
+        
     }
 
     public void printCity(){
@@ -131,9 +245,9 @@ public class City {
                 int y = r.nextInt(19);
 
                 if(this.moviment[x][y]!='C' && (x%6==0 || y%6==0) && (this.city[x][y]>11)){
-                    this.moviment[x][y] = 'C';
+                    
                     int[] source = {x, y};
-                    Car newCar = new Car(source, r.nextInt(9));
+                    Car newCar = new Car(source);
                     newCar.direction = this.city[x][y];
                     cars.add(newCar);
                     //
@@ -144,11 +258,17 @@ public class City {
             }
         }
     }
+    
+    public ArrayList<Car> getCars(){
+        return cars;
+    }
 
     public void resetMoviment(){
         for (Car c: cars) {
             this.moviment[c.current[0]][c.current[1]] =' ';
-            this.moviment[c.getSource()[0]][c.getSource()[1]] ='C';
+            c.finished = false;
+            c.started = false;
+            //this.moviment[c.getSource()[0]][c.getSource()[1]] ='C';
         }
         //printCity();
     }
