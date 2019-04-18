@@ -66,21 +66,14 @@ public class City {
             if(car.finished)
                 continue;
             
-            //System.out.println("NAO FINISHOU");
-            
             if(!car.canLeave(currentTime))
                 continue;
-            
-            ///System.out.println("NAO PODE LEAVAR");
             
             if(!car.started && this.moviment[car.getSource()[0]][car.getSource()[1]]!= 'C'){
                 this.moviment[car.current[0]][car.current[1]] = 'C';
                 car.started = true;
-                //System.out.println("e... começou!");
-                //printCity();
             }
             
-            //System.out.println("JA DEVIA ESTAR NA MATRIZ");
             
             //PEGANDO A PROXIMA LOCALIZAÇÃO;
             int[] next = car.go();
@@ -117,6 +110,7 @@ public class City {
                     this.city[x][(y+1)%19], y-1<0?this.city[x][19+(y-1)]:this.city[x][y-1]);
             if(car.finished)
                 this.moviment[x][y] = ' ';
+            
             
         }
         return congs;
@@ -215,9 +209,7 @@ public class City {
                 this.city[i][j] = '9';
             }
         }
-        
-        printCity();
-        
+                
     }
 
     public void printCity(){
@@ -243,16 +235,11 @@ public class City {
             while(true){
                 int x = r.nextInt(19);
                 int y = r.nextInt(19);
-
-                if(this.moviment[x][y]!='C' && (x%6==0 || y%6==0) && (this.city[x][y]>11)){
-                    
+                if(this.moviment[x][y]!='C' && (x%6==0 || y%6==0) && (this.city[x][y]>11)){   
                     int[] source = {x, y};
                     Car newCar = new Car(source);
                     newCar.direction = this.city[x][y];
                     cars.add(newCar);
-                    //
-//                    System.out.println("Carro " + i + " em: "+ x +" "+ y);
-//                    System.out.println("Carro " + i + " vai para: "+ newCar.direction);
                     break;
                 }
             }

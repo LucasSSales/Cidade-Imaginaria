@@ -13,13 +13,10 @@ public class Car {
     public boolean started = false;
     public boolean finished = false;
     Random r = new Random();
-    char[] cc = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};//deletar dps
 
     public Car(int[] source){
         this.source = source;
         this.current = source.clone();
-        this.destiny = cc[r.nextInt(9)];
-        this.time = r.nextInt(5);
     }
 
     //segue na direção da rua
@@ -59,10 +56,6 @@ public class Car {
     }
     
     
-//    private void wayToDestiny(){
-//        if()
-//    } 
-    
     public void arrived(char up, char down, char right, char left){
         if(this.destiny == up ||
            this.destiny == down ||
@@ -71,7 +64,6 @@ public class Car {
             this.finished = true;
         }
     }
-    
     
     
     public void setTime(int time){
@@ -87,6 +79,12 @@ public class Car {
     //decide se muda a direção no semaforo ou continua
     public char changeDirection(TrafficLight tl){
         Random coin = new Random();
+        //para nao sair dos limites da matriz nos semaforos cuja rua tem o sentido q permite isso
+        if(tl.getDir01() == tl.getDir02()){
+            return tl.getDir01();
+        }
+        
+        //no resto é jogada a moeda
         if(coin.nextInt(2) == 0){
            // System.out.println("coin 0");
             return direction;
