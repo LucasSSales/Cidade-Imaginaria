@@ -263,14 +263,11 @@ public class Screen extends javax.swing.JFrame{
         }
         exit+="<html/>";
         
-        if(go){
-            matriz.setText("AGUARDE...");
-        }
 
         if(go && start){
             start = false;
             
-            for(int g=0; g<100; g++){
+            for(int g=0; g<400; g++){
                 for (Chromossome chromossome: ga.population) {
                     c.putTrafficLights(chromossome.lightTimes);
                     int congs = 0;
